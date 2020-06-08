@@ -1,17 +1,3 @@
-// Copyright 2019 Google, MobilityData
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 /*eslint-disable block-scoped-var, no-redeclare, no-control-regex, no-prototype-builtins*/
 "use strict";
 
@@ -22,6 +8,40 @@ var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.ut
 
 // Exported root namespace
 var $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
+
+$root.kirin = (function() {
+
+    /**
+     * Namespace kirin.
+     * @exports kirin
+     * @namespace
+     */
+    var kirin = {};
+
+    /**
+     * StopTimeEventStatus enum.
+     * @name kirin.StopTimeEventStatus
+     * @enum {string}
+     * @property {number} SCHEDULED=0 SCHEDULED value
+     * @property {number} DELETED=1 DELETED value
+     * @property {number} NO_DATA=2 NO_DATA value
+     * @property {number} ADDED=3 ADDED value
+     * @property {number} DELETED_FOR_DETOUR=4 DELETED_FOR_DETOUR value
+     * @property {number} ADDED_FOR_DETOUR=5 ADDED_FOR_DETOUR value
+     */
+    kirin.StopTimeEventStatus = (function() {
+        var valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "SCHEDULED"] = 0;
+        values[valuesById[1] = "DELETED"] = 1;
+        values[valuesById[2] = "NO_DATA"] = 2;
+        values[valuesById[3] = "ADDED"] = 3;
+        values[valuesById[4] = "DELETED_FOR_DETOUR"] = 4;
+        values[valuesById[5] = "ADDED_FOR_DETOUR"] = 5;
+        return values;
+    })();
+
+    return kirin;
+})();
 
 $root.transit_realtime = (function() {
 
@@ -843,7 +863,9 @@ $root.transit_realtime = (function() {
          * @property {transit_realtime.IVehicleDescriptor|null} [vehicle] TripUpdate vehicle
          * @property {Array.<transit_realtime.TripUpdate.IStopTimeUpdate>|null} [stopTimeUpdate] TripUpdate stopTimeUpdate
          * @property {number|Long|null} [timestamp] TripUpdate timestamp
-         * @property {number|null} [delay] TripUpdate delay
+         * @property {string|null} [".kirin.tripMessage"] TripUpdate .kirin.tripMessage
+         * @property {transit_realtime.Alert.Effect|null} [".kirin.effect"] TripUpdate .kirin.effect
+         * @property {string|null} [".kirin.headsign"] TripUpdate .kirin.headsign
          */
 
         /**
@@ -895,12 +917,28 @@ $root.transit_realtime = (function() {
         TripUpdate.prototype.timestamp = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
 
         /**
-         * TripUpdate delay.
-         * @member {number} delay
+         * TripUpdate .kirin.tripMessage.
+         * @member {string} .kirin.tripMessage
          * @memberof transit_realtime.TripUpdate
          * @instance
          */
-        TripUpdate.prototype.delay = 0;
+        TripUpdate.prototype[".kirin.tripMessage"] = "";
+
+        /**
+         * TripUpdate .kirin.effect.
+         * @member {transit_realtime.Alert.Effect} .kirin.effect
+         * @memberof transit_realtime.TripUpdate
+         * @instance
+         */
+        TripUpdate.prototype[".kirin.effect"] = 1;
+
+        /**
+         * TripUpdate .kirin.headsign.
+         * @member {string} .kirin.headsign
+         * @memberof transit_realtime.TripUpdate
+         * @instance
+         */
+        TripUpdate.prototype[".kirin.headsign"] = "";
 
         /**
          * Creates a new TripUpdate instance using the specified properties.
@@ -934,8 +972,12 @@ $root.transit_realtime = (function() {
                 $root.transit_realtime.VehicleDescriptor.encode(message.vehicle, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 writer.uint32(/* id 4, wireType 0 =*/32).uint64(message.timestamp);
-            if (message.delay != null && message.hasOwnProperty("delay"))
-                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.delay);
+            if (message[".kirin.tripMessage"] != null && message.hasOwnProperty(".kirin.tripMessage"))
+                writer.uint32(/* id 1000, wireType 2 =*/8002).string(message[".kirin.tripMessage"]);
+            if (message[".kirin.effect"] != null && message.hasOwnProperty(".kirin.effect"))
+                writer.uint32(/* id 1001, wireType 0 =*/8008).int32(message[".kirin.effect"]);
+            if (message[".kirin.headsign"] != null && message.hasOwnProperty(".kirin.headsign"))
+                writer.uint32(/* id 1002, wireType 2 =*/8018).string(message[".kirin.headsign"]);
             return writer;
         };
 
@@ -984,8 +1026,14 @@ $root.transit_realtime = (function() {
                 case 4:
                     message.timestamp = reader.uint64();
                     break;
-                case 5:
-                    message.delay = reader.int32();
+                case 1000:
+                    message[".kirin.tripMessage"] = reader.string();
+                    break;
+                case 1001:
+                    message[".kirin.effect"] = reader.int32();
+                    break;
+                case 1002:
+                    message[".kirin.headsign"] = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1046,9 +1094,27 @@ $root.transit_realtime = (function() {
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 if (!$util.isInteger(message.timestamp) && !(message.timestamp && $util.isInteger(message.timestamp.low) && $util.isInteger(message.timestamp.high)))
                     return "timestamp: integer|Long expected";
-            if (message.delay != null && message.hasOwnProperty("delay"))
-                if (!$util.isInteger(message.delay))
-                    return "delay: integer expected";
+            if (message[".kirin.tripMessage"] != null && message.hasOwnProperty(".kirin.tripMessage"))
+                if (!$util.isString(message[".kirin.tripMessage"]))
+                    return ".kirin.tripMessage: string expected";
+            if (message[".kirin.effect"] != null && message.hasOwnProperty(".kirin.effect"))
+                switch (message[".kirin.effect"]) {
+                default:
+                    return ".kirin.effect: enum value expected";
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                    break;
+                }
+            if (message[".kirin.headsign"] != null && message.hasOwnProperty(".kirin.headsign"))
+                if (!$util.isString(message[".kirin.headsign"]))
+                    return ".kirin.headsign: string expected";
             return null;
         };
 
@@ -1093,8 +1159,48 @@ $root.transit_realtime = (function() {
                     message.timestamp = object.timestamp;
                 else if (typeof object.timestamp === "object")
                     message.timestamp = new $util.LongBits(object.timestamp.low >>> 0, object.timestamp.high >>> 0).toNumber(true);
-            if (object.delay != null)
-                message.delay = object.delay | 0;
+            if (object[".kirin.tripMessage"] != null)
+                message[".kirin.tripMessage"] = String(object[".kirin.tripMessage"]);
+            switch (object[".kirin.effect"]) {
+            case "NO_SERVICE":
+            case 1:
+                message[".kirin.effect"] = 1;
+                break;
+            case "REDUCED_SERVICE":
+            case 2:
+                message[".kirin.effect"] = 2;
+                break;
+            case "SIGNIFICANT_DELAYS":
+            case 3:
+                message[".kirin.effect"] = 3;
+                break;
+            case "DETOUR":
+            case 4:
+                message[".kirin.effect"] = 4;
+                break;
+            case "ADDITIONAL_SERVICE":
+            case 5:
+                message[".kirin.effect"] = 5;
+                break;
+            case "MODIFIED_SERVICE":
+            case 6:
+                message[".kirin.effect"] = 6;
+                break;
+            case "OTHER_EFFECT":
+            case 7:
+                message[".kirin.effect"] = 7;
+                break;
+            case "UNKNOWN_EFFECT":
+            case 8:
+                message[".kirin.effect"] = 8;
+                break;
+            case "STOP_MOVED":
+            case 9:
+                message[".kirin.effect"] = 9;
+                break;
+            }
+            if (object[".kirin.headsign"] != null)
+                message[".kirin.headsign"] = String(object[".kirin.headsign"]);
             return message;
         };
 
@@ -1121,7 +1227,9 @@ $root.transit_realtime = (function() {
                     object.timestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.timestamp = options.longs === String ? "0" : 0;
-                object.delay = 0;
+                object[".kirin.tripMessage"] = "";
+                object[".kirin.effect"] = options.enums === String ? "NO_SERVICE" : 1;
+                object[".kirin.headsign"] = "";
             }
             if (message.trip != null && message.hasOwnProperty("trip"))
                 object.trip = $root.transit_realtime.TripDescriptor.toObject(message.trip, options);
@@ -1137,8 +1245,12 @@ $root.transit_realtime = (function() {
                     object.timestamp = options.longs === String ? String(message.timestamp) : message.timestamp;
                 else
                     object.timestamp = options.longs === String ? $util.Long.prototype.toString.call(message.timestamp) : options.longs === Number ? new $util.LongBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0).toNumber(true) : message.timestamp;
-            if (message.delay != null && message.hasOwnProperty("delay"))
-                object.delay = message.delay;
+            if (message[".kirin.tripMessage"] != null && message.hasOwnProperty(".kirin.tripMessage"))
+                object[".kirin.tripMessage"] = message[".kirin.tripMessage"];
+            if (message[".kirin.effect"] != null && message.hasOwnProperty(".kirin.effect"))
+                object[".kirin.effect"] = options.enums === String ? $root.transit_realtime.Alert.Effect[message[".kirin.effect"]] : message[".kirin.effect"];
+            if (message[".kirin.headsign"] != null && message.hasOwnProperty(".kirin.headsign"))
+                object[".kirin.headsign"] = message[".kirin.headsign"];
             return object;
         };
 
@@ -1162,6 +1274,8 @@ $root.transit_realtime = (function() {
              * @property {number|null} [delay] StopTimeEvent delay
              * @property {number|Long|null} [time] StopTimeEvent time
              * @property {number|null} [uncertainty] StopTimeEvent uncertainty
+             * @property {transit_realtime.TripUpdate.StopTimeUpdate.ScheduleRelationship|null} [".kirin.stopTimeEventRelationship"] StopTimeEvent .kirin.stopTimeEventRelationship
+             * @property {kirin.StopTimeEventStatus|null} [".kirin.stopTimeEventStatus"] StopTimeEvent .kirin.stopTimeEventStatus
              */
 
             /**
@@ -1204,6 +1318,22 @@ $root.transit_realtime = (function() {
             StopTimeEvent.prototype.uncertainty = 0;
 
             /**
+             * StopTimeEvent .kirin.stopTimeEventRelationship.
+             * @member {transit_realtime.TripUpdate.StopTimeUpdate.ScheduleRelationship} .kirin.stopTimeEventRelationship
+             * @memberof transit_realtime.TripUpdate.StopTimeEvent
+             * @instance
+             */
+            StopTimeEvent.prototype[".kirin.stopTimeEventRelationship"] = 0;
+
+            /**
+             * StopTimeEvent .kirin.stopTimeEventStatus.
+             * @member {kirin.StopTimeEventStatus} .kirin.stopTimeEventStatus
+             * @memberof transit_realtime.TripUpdate.StopTimeEvent
+             * @instance
+             */
+            StopTimeEvent.prototype[".kirin.stopTimeEventStatus"] = 0;
+
+            /**
              * Creates a new StopTimeEvent instance using the specified properties.
              * @function create
              * @memberof transit_realtime.TripUpdate.StopTimeEvent
@@ -1233,6 +1363,10 @@ $root.transit_realtime = (function() {
                     writer.uint32(/* id 2, wireType 0 =*/16).int64(message.time);
                 if (message.uncertainty != null && message.hasOwnProperty("uncertainty"))
                     writer.uint32(/* id 3, wireType 0 =*/24).int32(message.uncertainty);
+                if (message[".kirin.stopTimeEventRelationship"] != null && message.hasOwnProperty(".kirin.stopTimeEventRelationship"))
+                    writer.uint32(/* id 1000, wireType 0 =*/8000).int32(message[".kirin.stopTimeEventRelationship"]);
+                if (message[".kirin.stopTimeEventStatus"] != null && message.hasOwnProperty(".kirin.stopTimeEventStatus"))
+                    writer.uint32(/* id 1001, wireType 0 =*/8008).int32(message[".kirin.stopTimeEventStatus"]);
                 return writer;
             };
 
@@ -1275,6 +1409,12 @@ $root.transit_realtime = (function() {
                         break;
                     case 3:
                         message.uncertainty = reader.int32();
+                        break;
+                    case 1000:
+                        message[".kirin.stopTimeEventRelationship"] = reader.int32();
+                        break;
+                    case 1001:
+                        message[".kirin.stopTimeEventStatus"] = reader.int32();
                         break;
                     default:
                         reader.skipType(tag & 7);
@@ -1320,6 +1460,28 @@ $root.transit_realtime = (function() {
                 if (message.uncertainty != null && message.hasOwnProperty("uncertainty"))
                     if (!$util.isInteger(message.uncertainty))
                         return "uncertainty: integer expected";
+                if (message[".kirin.stopTimeEventRelationship"] != null && message.hasOwnProperty(".kirin.stopTimeEventRelationship"))
+                    switch (message[".kirin.stopTimeEventRelationship"]) {
+                    default:
+                        return ".kirin.stopTimeEventRelationship: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                        break;
+                    }
+                if (message[".kirin.stopTimeEventStatus"] != null && message.hasOwnProperty(".kirin.stopTimeEventStatus"))
+                    switch (message[".kirin.stopTimeEventStatus"]) {
+                    default:
+                        return ".kirin.stopTimeEventStatus: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                        break;
+                    }
                 return null;
             };
 
@@ -1348,6 +1510,50 @@ $root.transit_realtime = (function() {
                         message.time = new $util.LongBits(object.time.low >>> 0, object.time.high >>> 0).toNumber();
                 if (object.uncertainty != null)
                     message.uncertainty = object.uncertainty | 0;
+                switch (object[".kirin.stopTimeEventRelationship"]) {
+                case "SCHEDULED":
+                case 0:
+                    message[".kirin.stopTimeEventRelationship"] = 0;
+                    break;
+                case "SKIPPED":
+                case 1:
+                    message[".kirin.stopTimeEventRelationship"] = 1;
+                    break;
+                case "NO_DATA":
+                case 2:
+                    message[".kirin.stopTimeEventRelationship"] = 2;
+                    break;
+                case "ADDED":
+                case 3:
+                    message[".kirin.stopTimeEventRelationship"] = 3;
+                    break;
+                }
+                switch (object[".kirin.stopTimeEventStatus"]) {
+                case "SCHEDULED":
+                case 0:
+                    message[".kirin.stopTimeEventStatus"] = 0;
+                    break;
+                case "DELETED":
+                case 1:
+                    message[".kirin.stopTimeEventStatus"] = 1;
+                    break;
+                case "NO_DATA":
+                case 2:
+                    message[".kirin.stopTimeEventStatus"] = 2;
+                    break;
+                case "ADDED":
+                case 3:
+                    message[".kirin.stopTimeEventStatus"] = 3;
+                    break;
+                case "DELETED_FOR_DETOUR":
+                case 4:
+                    message[".kirin.stopTimeEventStatus"] = 4;
+                    break;
+                case "ADDED_FOR_DETOUR":
+                case 5:
+                    message[".kirin.stopTimeEventStatus"] = 5;
+                    break;
+                }
                 return message;
             };
 
@@ -1372,6 +1578,8 @@ $root.transit_realtime = (function() {
                     } else
                         object.time = options.longs === String ? "0" : 0;
                     object.uncertainty = 0;
+                    object[".kirin.stopTimeEventRelationship"] = options.enums === String ? "SCHEDULED" : 0;
+                    object[".kirin.stopTimeEventStatus"] = options.enums === String ? "SCHEDULED" : 0;
                 }
                 if (message.delay != null && message.hasOwnProperty("delay"))
                     object.delay = message.delay;
@@ -1382,6 +1590,10 @@ $root.transit_realtime = (function() {
                         object.time = options.longs === String ? $util.Long.prototype.toString.call(message.time) : options.longs === Number ? new $util.LongBits(message.time.low >>> 0, message.time.high >>> 0).toNumber() : message.time;
                 if (message.uncertainty != null && message.hasOwnProperty("uncertainty"))
                     object.uncertainty = message.uncertainty;
+                if (message[".kirin.stopTimeEventRelationship"] != null && message.hasOwnProperty(".kirin.stopTimeEventRelationship"))
+                    object[".kirin.stopTimeEventRelationship"] = options.enums === String ? $root.transit_realtime.TripUpdate.StopTimeUpdate.ScheduleRelationship[message[".kirin.stopTimeEventRelationship"]] : message[".kirin.stopTimeEventRelationship"];
+                if (message[".kirin.stopTimeEventStatus"] != null && message.hasOwnProperty(".kirin.stopTimeEventStatus"))
+                    object[".kirin.stopTimeEventStatus"] = options.enums === String ? $root.kirin.StopTimeEventStatus[message[".kirin.stopTimeEventStatus"]] : message[".kirin.stopTimeEventStatus"];
                 return object;
             };
 
@@ -1410,6 +1622,7 @@ $root.transit_realtime = (function() {
              * @property {transit_realtime.TripUpdate.IStopTimeEvent|null} [arrival] StopTimeUpdate arrival
              * @property {transit_realtime.TripUpdate.IStopTimeEvent|null} [departure] StopTimeUpdate departure
              * @property {transit_realtime.TripUpdate.StopTimeUpdate.ScheduleRelationship|null} [scheduleRelationship] StopTimeUpdate scheduleRelationship
+             * @property {string|null} [".kirin.stoptimeMessage"] StopTimeUpdate .kirin.stoptimeMessage
              */
 
             /**
@@ -1468,6 +1681,14 @@ $root.transit_realtime = (function() {
             StopTimeUpdate.prototype.scheduleRelationship = 0;
 
             /**
+             * StopTimeUpdate .kirin.stoptimeMessage.
+             * @member {string} .kirin.stoptimeMessage
+             * @memberof transit_realtime.TripUpdate.StopTimeUpdate
+             * @instance
+             */
+            StopTimeUpdate.prototype[".kirin.stoptimeMessage"] = "";
+
+            /**
              * Creates a new StopTimeUpdate instance using the specified properties.
              * @function create
              * @memberof transit_realtime.TripUpdate.StopTimeUpdate
@@ -1501,6 +1722,8 @@ $root.transit_realtime = (function() {
                     writer.uint32(/* id 4, wireType 2 =*/34).string(message.stopId);
                 if (message.scheduleRelationship != null && message.hasOwnProperty("scheduleRelationship"))
                     writer.uint32(/* id 5, wireType 0 =*/40).int32(message.scheduleRelationship);
+                if (message[".kirin.stoptimeMessage"] != null && message.hasOwnProperty(".kirin.stoptimeMessage"))
+                    writer.uint32(/* id 1000, wireType 2 =*/8002).string(message[".kirin.stoptimeMessage"]);
                 return writer;
             };
 
@@ -1549,6 +1772,9 @@ $root.transit_realtime = (function() {
                         break;
                     case 5:
                         message.scheduleRelationship = reader.int32();
+                        break;
+                    case 1000:
+                        message[".kirin.stoptimeMessage"] = reader.string();
                         break;
                     default:
                         reader.skipType(tag & 7);
@@ -1608,8 +1834,12 @@ $root.transit_realtime = (function() {
                     case 0:
                     case 1:
                     case 2:
+                    case 3:
                         break;
                     }
+                if (message[".kirin.stoptimeMessage"] != null && message.hasOwnProperty(".kirin.stoptimeMessage"))
+                    if (!$util.isString(message[".kirin.stoptimeMessage"]))
+                        return ".kirin.stoptimeMessage: string expected";
                 return null;
             };
 
@@ -1652,7 +1882,13 @@ $root.transit_realtime = (function() {
                 case 2:
                     message.scheduleRelationship = 2;
                     break;
+                case "ADDED":
+                case 3:
+                    message.scheduleRelationship = 3;
+                    break;
                 }
+                if (object[".kirin.stoptimeMessage"] != null)
+                    message[".kirin.stoptimeMessage"] = String(object[".kirin.stoptimeMessage"]);
                 return message;
             };
 
@@ -1675,6 +1911,7 @@ $root.transit_realtime = (function() {
                     object.departure = null;
                     object.stopId = "";
                     object.scheduleRelationship = options.enums === String ? "SCHEDULED" : 0;
+                    object[".kirin.stoptimeMessage"] = "";
                 }
                 if (message.stopSequence != null && message.hasOwnProperty("stopSequence"))
                     object.stopSequence = message.stopSequence;
@@ -1686,6 +1923,8 @@ $root.transit_realtime = (function() {
                     object.stopId = message.stopId;
                 if (message.scheduleRelationship != null && message.hasOwnProperty("scheduleRelationship"))
                     object.scheduleRelationship = options.enums === String ? $root.transit_realtime.TripUpdate.StopTimeUpdate.ScheduleRelationship[message.scheduleRelationship] : message.scheduleRelationship;
+                if (message[".kirin.stoptimeMessage"] != null && message.hasOwnProperty(".kirin.stoptimeMessage"))
+                    object[".kirin.stoptimeMessage"] = message[".kirin.stoptimeMessage"];
                 return object;
             };
 
@@ -1707,12 +1946,14 @@ $root.transit_realtime = (function() {
              * @property {number} SCHEDULED=0 SCHEDULED value
              * @property {number} SKIPPED=1 SKIPPED value
              * @property {number} NO_DATA=2 NO_DATA value
+             * @property {number} ADDED=3 ADDED value
              */
             StopTimeUpdate.ScheduleRelationship = (function() {
                 var valuesById = {}, values = Object.create(valuesById);
                 values[valuesById[0] = "SCHEDULED"] = 0;
                 values[valuesById[1] = "SKIPPED"] = 1;
                 values[valuesById[2] = "NO_DATA"] = 2;
+                values[valuesById[3] = "ADDED"] = 3;
                 return values;
             })();
 
@@ -1736,7 +1977,7 @@ $root.transit_realtime = (function() {
          * @property {transit_realtime.VehiclePosition.VehicleStopStatus|null} [currentStatus] VehiclePosition currentStatus
          * @property {number|Long|null} [timestamp] VehiclePosition timestamp
          * @property {transit_realtime.VehiclePosition.CongestionLevel|null} [congestionLevel] VehiclePosition congestionLevel
-         * @property {transit_realtime.VehiclePosition.OccupancyStatus|null} [occupancyStatus] VehiclePosition occupancyStatus
+         * @property {transit_realtime.IOVapiVehiclePosition|null} [ovapiVehiclePosition] VehiclePosition ovapiVehiclePosition
          */
 
         /**
@@ -1819,12 +2060,12 @@ $root.transit_realtime = (function() {
         VehiclePosition.prototype.congestionLevel = 0;
 
         /**
-         * VehiclePosition occupancyStatus.
-         * @member {transit_realtime.VehiclePosition.OccupancyStatus} occupancyStatus
+         * VehiclePosition ovapiVehiclePosition.
+         * @member {transit_realtime.IOVapiVehiclePosition|null|undefined} ovapiVehiclePosition
          * @memberof transit_realtime.VehiclePosition
          * @instance
          */
-        VehiclePosition.prototype.occupancyStatus = 0;
+        VehiclePosition.prototype.ovapiVehiclePosition = null;
 
         /**
          * Creates a new VehiclePosition instance using the specified properties.
@@ -1866,8 +2107,8 @@ $root.transit_realtime = (function() {
                 writer.uint32(/* id 7, wireType 2 =*/58).string(message.stopId);
             if (message.vehicle != null && message.hasOwnProperty("vehicle"))
                 $root.transit_realtime.VehicleDescriptor.encode(message.vehicle, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
-            if (message.occupancyStatus != null && message.hasOwnProperty("occupancyStatus"))
-                writer.uint32(/* id 9, wireType 0 =*/72).int32(message.occupancyStatus);
+            if (message.ovapiVehiclePosition != null && message.hasOwnProperty("ovapiVehiclePosition"))
+                $root.transit_realtime.OVapiVehiclePosition.encode(message.ovapiVehiclePosition, writer.uint32(/* id 1003, wireType 2 =*/8026).fork()).ldelim();
             return writer;
         };
 
@@ -1926,8 +2167,8 @@ $root.transit_realtime = (function() {
                 case 6:
                     message.congestionLevel = reader.int32();
                     break;
-                case 9:
-                    message.occupancyStatus = reader.int32();
+                case 1003:
+                    message.ovapiVehiclePosition = $root.transit_realtime.OVapiVehiclePosition.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2008,19 +2249,11 @@ $root.transit_realtime = (function() {
                 case 4:
                     break;
                 }
-            if (message.occupancyStatus != null && message.hasOwnProperty("occupancyStatus"))
-                switch (message.occupancyStatus) {
-                default:
-                    return "occupancyStatus: enum value expected";
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                    break;
-                }
+            if (message.ovapiVehiclePosition != null && message.hasOwnProperty("ovapiVehiclePosition")) {
+                var error = $root.transit_realtime.OVapiVehiclePosition.verify(message.ovapiVehiclePosition);
+                if (error)
+                    return "ovapiVehiclePosition." + error;
+            }
             return null;
         };
 
@@ -2100,35 +2333,10 @@ $root.transit_realtime = (function() {
                 message.congestionLevel = 4;
                 break;
             }
-            switch (object.occupancyStatus) {
-            case "EMPTY":
-            case 0:
-                message.occupancyStatus = 0;
-                break;
-            case "MANY_SEATS_AVAILABLE":
-            case 1:
-                message.occupancyStatus = 1;
-                break;
-            case "FEW_SEATS_AVAILABLE":
-            case 2:
-                message.occupancyStatus = 2;
-                break;
-            case "STANDING_ROOM_ONLY":
-            case 3:
-                message.occupancyStatus = 3;
-                break;
-            case "CRUSHED_STANDING_ROOM_ONLY":
-            case 4:
-                message.occupancyStatus = 4;
-                break;
-            case "FULL":
-            case 5:
-                message.occupancyStatus = 5;
-                break;
-            case "NOT_ACCEPTING_PASSENGERS":
-            case 6:
-                message.occupancyStatus = 6;
-                break;
+            if (object.ovapiVehiclePosition != null) {
+                if (typeof object.ovapiVehiclePosition !== "object")
+                    throw TypeError(".transit_realtime.VehiclePosition.ovapiVehiclePosition: object expected");
+                message.ovapiVehiclePosition = $root.transit_realtime.OVapiVehiclePosition.fromObject(object.ovapiVehiclePosition);
             }
             return message;
         };
@@ -2159,7 +2367,7 @@ $root.transit_realtime = (function() {
                 object.congestionLevel = options.enums === String ? "UNKNOWN_CONGESTION_LEVEL" : 0;
                 object.stopId = "";
                 object.vehicle = null;
-                object.occupancyStatus = options.enums === String ? "EMPTY" : 0;
+                object.ovapiVehiclePosition = null;
             }
             if (message.trip != null && message.hasOwnProperty("trip"))
                 object.trip = $root.transit_realtime.TripDescriptor.toObject(message.trip, options);
@@ -2180,8 +2388,8 @@ $root.transit_realtime = (function() {
                 object.stopId = message.stopId;
             if (message.vehicle != null && message.hasOwnProperty("vehicle"))
                 object.vehicle = $root.transit_realtime.VehicleDescriptor.toObject(message.vehicle, options);
-            if (message.occupancyStatus != null && message.hasOwnProperty("occupancyStatus"))
-                object.occupancyStatus = options.enums === String ? $root.transit_realtime.VehiclePosition.OccupancyStatus[message.occupancyStatus] : message.occupancyStatus;
+            if (message.ovapiVehiclePosition != null && message.hasOwnProperty("ovapiVehiclePosition"))
+                object.ovapiVehiclePosition = $root.transit_realtime.OVapiVehiclePosition.toObject(message.ovapiVehiclePosition, options);
             return object;
         };
 
@@ -2232,31 +2440,194 @@ $root.transit_realtime = (function() {
             return values;
         })();
 
-        /**
-         * OccupancyStatus enum.
-         * @name transit_realtime.VehiclePosition.OccupancyStatus
-         * @enum {string}
-         * @property {number} EMPTY=0 EMPTY value
-         * @property {number} MANY_SEATS_AVAILABLE=1 MANY_SEATS_AVAILABLE value
-         * @property {number} FEW_SEATS_AVAILABLE=2 FEW_SEATS_AVAILABLE value
-         * @property {number} STANDING_ROOM_ONLY=3 STANDING_ROOM_ONLY value
-         * @property {number} CRUSHED_STANDING_ROOM_ONLY=4 CRUSHED_STANDING_ROOM_ONLY value
-         * @property {number} FULL=5 FULL value
-         * @property {number} NOT_ACCEPTING_PASSENGERS=6 NOT_ACCEPTING_PASSENGERS value
-         */
-        VehiclePosition.OccupancyStatus = (function() {
-            var valuesById = {}, values = Object.create(valuesById);
-            values[valuesById[0] = "EMPTY"] = 0;
-            values[valuesById[1] = "MANY_SEATS_AVAILABLE"] = 1;
-            values[valuesById[2] = "FEW_SEATS_AVAILABLE"] = 2;
-            values[valuesById[3] = "STANDING_ROOM_ONLY"] = 3;
-            values[valuesById[4] = "CRUSHED_STANDING_ROOM_ONLY"] = 4;
-            values[valuesById[5] = "FULL"] = 5;
-            values[valuesById[6] = "NOT_ACCEPTING_PASSENGERS"] = 6;
-            return values;
-        })();
-
         return VehiclePosition;
+    })();
+
+    transit_realtime.OVapiVehiclePosition = (function() {
+
+        /**
+         * Properties of a OVapiVehiclePosition.
+         * @memberof transit_realtime
+         * @interface IOVapiVehiclePosition
+         * @property {number|null} [delay] OVapiVehiclePosition delay
+         */
+
+        /**
+         * Constructs a new OVapiVehiclePosition.
+         * @memberof transit_realtime
+         * @classdesc Represents a OVapiVehiclePosition.
+         * @implements IOVapiVehiclePosition
+         * @constructor
+         * @param {transit_realtime.IOVapiVehiclePosition=} [properties] Properties to set
+         */
+        function OVapiVehiclePosition(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * OVapiVehiclePosition delay.
+         * @member {number} delay
+         * @memberof transit_realtime.OVapiVehiclePosition
+         * @instance
+         */
+        OVapiVehiclePosition.prototype.delay = 0;
+
+        /**
+         * Creates a new OVapiVehiclePosition instance using the specified properties.
+         * @function create
+         * @memberof transit_realtime.OVapiVehiclePosition
+         * @static
+         * @param {transit_realtime.IOVapiVehiclePosition=} [properties] Properties to set
+         * @returns {transit_realtime.OVapiVehiclePosition} OVapiVehiclePosition instance
+         */
+        OVapiVehiclePosition.create = function create(properties) {
+            return new OVapiVehiclePosition(properties);
+        };
+
+        /**
+         * Encodes the specified OVapiVehiclePosition message. Does not implicitly {@link transit_realtime.OVapiVehiclePosition.verify|verify} messages.
+         * @function encode
+         * @memberof transit_realtime.OVapiVehiclePosition
+         * @static
+         * @param {transit_realtime.IOVapiVehiclePosition} message OVapiVehiclePosition message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        OVapiVehiclePosition.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.delay != null && message.hasOwnProperty("delay"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.delay);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified OVapiVehiclePosition message, length delimited. Does not implicitly {@link transit_realtime.OVapiVehiclePosition.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof transit_realtime.OVapiVehiclePosition
+         * @static
+         * @param {transit_realtime.IOVapiVehiclePosition} message OVapiVehiclePosition message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        OVapiVehiclePosition.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a OVapiVehiclePosition message from the specified reader or buffer.
+         * @function decode
+         * @memberof transit_realtime.OVapiVehiclePosition
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {transit_realtime.OVapiVehiclePosition} OVapiVehiclePosition
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        OVapiVehiclePosition.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.transit_realtime.OVapiVehiclePosition();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.delay = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a OVapiVehiclePosition message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof transit_realtime.OVapiVehiclePosition
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {transit_realtime.OVapiVehiclePosition} OVapiVehiclePosition
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        OVapiVehiclePosition.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a OVapiVehiclePosition message.
+         * @function verify
+         * @memberof transit_realtime.OVapiVehiclePosition
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        OVapiVehiclePosition.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.delay != null && message.hasOwnProperty("delay"))
+                if (!$util.isInteger(message.delay))
+                    return "delay: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a OVapiVehiclePosition message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof transit_realtime.OVapiVehiclePosition
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {transit_realtime.OVapiVehiclePosition} OVapiVehiclePosition
+         */
+        OVapiVehiclePosition.fromObject = function fromObject(object) {
+            if (object instanceof $root.transit_realtime.OVapiVehiclePosition)
+                return object;
+            var message = new $root.transit_realtime.OVapiVehiclePosition();
+            if (object.delay != null)
+                message.delay = object.delay | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a OVapiVehiclePosition message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof transit_realtime.OVapiVehiclePosition
+         * @static
+         * @param {transit_realtime.OVapiVehiclePosition} message OVapiVehiclePosition
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        OVapiVehiclePosition.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.delay = 0;
+            if (message.delay != null && message.hasOwnProperty("delay"))
+                object.delay = message.delay;
+            return object;
+        };
+
+        /**
+         * Converts this OVapiVehiclePosition to JSON.
+         * @function toJSON
+         * @memberof transit_realtime.OVapiVehiclePosition
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        OVapiVehiclePosition.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return OVapiVehiclePosition;
     })();
 
     transit_realtime.Alert = (function() {
@@ -2272,9 +2643,6 @@ $root.transit_realtime = (function() {
          * @property {transit_realtime.ITranslatedString|null} [url] Alert url
          * @property {transit_realtime.ITranslatedString|null} [headerText] Alert headerText
          * @property {transit_realtime.ITranslatedString|null} [descriptionText] Alert descriptionText
-         * @property {transit_realtime.ITranslatedString|null} [ttsHeaderText] Alert ttsHeaderText
-         * @property {transit_realtime.ITranslatedString|null} [ttsDescriptionText] Alert ttsDescriptionText
-         * @property {transit_realtime.Alert.SeverityLevel|null} [severityLevel] Alert severityLevel
          */
 
         /**
@@ -2351,30 +2719,6 @@ $root.transit_realtime = (function() {
         Alert.prototype.descriptionText = null;
 
         /**
-         * Alert ttsHeaderText.
-         * @member {transit_realtime.ITranslatedString|null|undefined} ttsHeaderText
-         * @memberof transit_realtime.Alert
-         * @instance
-         */
-        Alert.prototype.ttsHeaderText = null;
-
-        /**
-         * Alert ttsDescriptionText.
-         * @member {transit_realtime.ITranslatedString|null|undefined} ttsDescriptionText
-         * @memberof transit_realtime.Alert
-         * @instance
-         */
-        Alert.prototype.ttsDescriptionText = null;
-
-        /**
-         * Alert severityLevel.
-         * @member {transit_realtime.Alert.SeverityLevel} severityLevel
-         * @memberof transit_realtime.Alert
-         * @instance
-         */
-        Alert.prototype.severityLevel = 1;
-
-        /**
          * Creates a new Alert instance using the specified properties.
          * @function create
          * @memberof transit_realtime.Alert
@@ -2414,12 +2758,6 @@ $root.transit_realtime = (function() {
                 $root.transit_realtime.TranslatedString.encode(message.headerText, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
             if (message.descriptionText != null && message.hasOwnProperty("descriptionText"))
                 $root.transit_realtime.TranslatedString.encode(message.descriptionText, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
-            if (message.ttsHeaderText != null && message.hasOwnProperty("ttsHeaderText"))
-                $root.transit_realtime.TranslatedString.encode(message.ttsHeaderText, writer.uint32(/* id 12, wireType 2 =*/98).fork()).ldelim();
-            if (message.ttsDescriptionText != null && message.hasOwnProperty("ttsDescriptionText"))
-                $root.transit_realtime.TranslatedString.encode(message.ttsDescriptionText, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
-            if (message.severityLevel != null && message.hasOwnProperty("severityLevel"))
-                writer.uint32(/* id 14, wireType 0 =*/112).int32(message.severityLevel);
             return writer;
         };
 
@@ -2478,15 +2816,6 @@ $root.transit_realtime = (function() {
                     break;
                 case 11:
                     message.descriptionText = $root.transit_realtime.TranslatedString.decode(reader, reader.uint32());
-                    break;
-                case 12:
-                    message.ttsHeaderText = $root.transit_realtime.TranslatedString.decode(reader, reader.uint32());
-                    break;
-                case 13:
-                    message.ttsDescriptionText = $root.transit_realtime.TranslatedString.decode(reader, reader.uint32());
-                    break;
-                case 14:
-                    message.severityLevel = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2572,7 +2901,6 @@ $root.transit_realtime = (function() {
                 case 7:
                 case 8:
                 case 9:
-                case 10:
                     break;
                 }
             if (message.url != null && message.hasOwnProperty("url")) {
@@ -2590,26 +2918,6 @@ $root.transit_realtime = (function() {
                 if (error)
                     return "descriptionText." + error;
             }
-            if (message.ttsHeaderText != null && message.hasOwnProperty("ttsHeaderText")) {
-                var error = $root.transit_realtime.TranslatedString.verify(message.ttsHeaderText);
-                if (error)
-                    return "ttsHeaderText." + error;
-            }
-            if (message.ttsDescriptionText != null && message.hasOwnProperty("ttsDescriptionText")) {
-                var error = $root.transit_realtime.TranslatedString.verify(message.ttsDescriptionText);
-                if (error)
-                    return "ttsDescriptionText." + error;
-            }
-            if (message.severityLevel != null && message.hasOwnProperty("severityLevel"))
-                switch (message.severityLevel) {
-                default:
-                    return "severityLevel: enum value expected";
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    break;
-                }
             return null;
         };
 
@@ -2732,10 +3040,6 @@ $root.transit_realtime = (function() {
             case 9:
                 message.effect = 9;
                 break;
-            case "NO_EFFECT":
-            case 10:
-                message.effect = 10;
-                break;
             }
             if (object.url != null) {
                 if (typeof object.url !== "object")
@@ -2751,34 +3055,6 @@ $root.transit_realtime = (function() {
                 if (typeof object.descriptionText !== "object")
                     throw TypeError(".transit_realtime.Alert.descriptionText: object expected");
                 message.descriptionText = $root.transit_realtime.TranslatedString.fromObject(object.descriptionText);
-            }
-            if (object.ttsHeaderText != null) {
-                if (typeof object.ttsHeaderText !== "object")
-                    throw TypeError(".transit_realtime.Alert.ttsHeaderText: object expected");
-                message.ttsHeaderText = $root.transit_realtime.TranslatedString.fromObject(object.ttsHeaderText);
-            }
-            if (object.ttsDescriptionText != null) {
-                if (typeof object.ttsDescriptionText !== "object")
-                    throw TypeError(".transit_realtime.Alert.ttsDescriptionText: object expected");
-                message.ttsDescriptionText = $root.transit_realtime.TranslatedString.fromObject(object.ttsDescriptionText);
-            }
-            switch (object.severityLevel) {
-            case "UNKNOWN_SEVERITY":
-            case 1:
-                message.severityLevel = 1;
-                break;
-            case "INFO":
-            case 2:
-                message.severityLevel = 2;
-                break;
-            case "WARNING":
-            case 3:
-                message.severityLevel = 3;
-                break;
-            case "SEVERE":
-            case 4:
-                message.severityLevel = 4;
-                break;
             }
             return message;
         };
@@ -2806,9 +3082,6 @@ $root.transit_realtime = (function() {
                 object.url = null;
                 object.headerText = null;
                 object.descriptionText = null;
-                object.ttsHeaderText = null;
-                object.ttsDescriptionText = null;
-                object.severityLevel = options.enums === String ? "UNKNOWN_SEVERITY" : 1;
             }
             if (message.activePeriod && message.activePeriod.length) {
                 object.activePeriod = [];
@@ -2830,12 +3103,6 @@ $root.transit_realtime = (function() {
                 object.headerText = $root.transit_realtime.TranslatedString.toObject(message.headerText, options);
             if (message.descriptionText != null && message.hasOwnProperty("descriptionText"))
                 object.descriptionText = $root.transit_realtime.TranslatedString.toObject(message.descriptionText, options);
-            if (message.ttsHeaderText != null && message.hasOwnProperty("ttsHeaderText"))
-                object.ttsHeaderText = $root.transit_realtime.TranslatedString.toObject(message.ttsHeaderText, options);
-            if (message.ttsDescriptionText != null && message.hasOwnProperty("ttsDescriptionText"))
-                object.ttsDescriptionText = $root.transit_realtime.TranslatedString.toObject(message.ttsDescriptionText, options);
-            if (message.severityLevel != null && message.hasOwnProperty("severityLevel"))
-                object.severityLevel = options.enums === String ? $root.transit_realtime.Alert.SeverityLevel[message.severityLevel] : message.severityLevel;
             return object;
         };
 
@@ -2897,7 +3164,6 @@ $root.transit_realtime = (function() {
          * @property {number} OTHER_EFFECT=7 OTHER_EFFECT value
          * @property {number} UNKNOWN_EFFECT=8 UNKNOWN_EFFECT value
          * @property {number} STOP_MOVED=9 STOP_MOVED value
-         * @property {number} NO_EFFECT=10 NO_EFFECT value
          */
         Alert.Effect = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -2910,25 +3176,6 @@ $root.transit_realtime = (function() {
             values[valuesById[7] = "OTHER_EFFECT"] = 7;
             values[valuesById[8] = "UNKNOWN_EFFECT"] = 8;
             values[valuesById[9] = "STOP_MOVED"] = 9;
-            values[valuesById[10] = "NO_EFFECT"] = 10;
-            return values;
-        })();
-
-        /**
-         * SeverityLevel enum.
-         * @name transit_realtime.Alert.SeverityLevel
-         * @enum {string}
-         * @property {number} UNKNOWN_SEVERITY=1 UNKNOWN_SEVERITY value
-         * @property {number} INFO=2 INFO value
-         * @property {number} WARNING=3 WARNING value
-         * @property {number} SEVERE=4 SEVERE value
-         */
-        Alert.SeverityLevel = (function() {
-            var valuesById = {}, values = Object.create(valuesById);
-            values[valuesById[1] = "UNKNOWN_SEVERITY"] = 1;
-            values[valuesById[2] = "INFO"] = 2;
-            values[valuesById[3] = "WARNING"] = 3;
-            values[valuesById[4] = "SEVERE"] = 4;
             return values;
         })();
 
@@ -3457,10 +3704,11 @@ $root.transit_realtime = (function() {
          * @interface ITripDescriptor
          * @property {string|null} [tripId] TripDescriptor tripId
          * @property {string|null} [routeId] TripDescriptor routeId
-         * @property {number|null} [directionId] TripDescriptor directionId
          * @property {string|null} [startTime] TripDescriptor startTime
          * @property {string|null} [startDate] TripDescriptor startDate
          * @property {transit_realtime.TripDescriptor.ScheduleRelationship|null} [scheduleRelationship] TripDescriptor scheduleRelationship
+         * @property {string|null} [".kirin.contributor"] TripDescriptor .kirin.contributor
+         * @property {string|null} [".kirin.companyId"] TripDescriptor .kirin.companyId
          */
 
         /**
@@ -3495,14 +3743,6 @@ $root.transit_realtime = (function() {
         TripDescriptor.prototype.routeId = "";
 
         /**
-         * TripDescriptor directionId.
-         * @member {number} directionId
-         * @memberof transit_realtime.TripDescriptor
-         * @instance
-         */
-        TripDescriptor.prototype.directionId = 0;
-
-        /**
          * TripDescriptor startTime.
          * @member {string} startTime
          * @memberof transit_realtime.TripDescriptor
@@ -3525,6 +3765,22 @@ $root.transit_realtime = (function() {
          * @instance
          */
         TripDescriptor.prototype.scheduleRelationship = 0;
+
+        /**
+         * TripDescriptor .kirin.contributor.
+         * @member {string} .kirin.contributor
+         * @memberof transit_realtime.TripDescriptor
+         * @instance
+         */
+        TripDescriptor.prototype[".kirin.contributor"] = "";
+
+        /**
+         * TripDescriptor .kirin.companyId.
+         * @member {string} .kirin.companyId
+         * @memberof transit_realtime.TripDescriptor
+         * @instance
+         */
+        TripDescriptor.prototype[".kirin.companyId"] = "";
 
         /**
          * Creates a new TripDescriptor instance using the specified properties.
@@ -3560,8 +3816,10 @@ $root.transit_realtime = (function() {
                 writer.uint32(/* id 4, wireType 0 =*/32).int32(message.scheduleRelationship);
             if (message.routeId != null && message.hasOwnProperty("routeId"))
                 writer.uint32(/* id 5, wireType 2 =*/42).string(message.routeId);
-            if (message.directionId != null && message.hasOwnProperty("directionId"))
-                writer.uint32(/* id 6, wireType 0 =*/48).uint32(message.directionId);
+            if (message[".kirin.contributor"] != null && message.hasOwnProperty(".kirin.contributor"))
+                writer.uint32(/* id 1000, wireType 2 =*/8002).string(message[".kirin.contributor"]);
+            if (message[".kirin.companyId"] != null && message.hasOwnProperty(".kirin.companyId"))
+                writer.uint32(/* id 1001, wireType 2 =*/8010).string(message[".kirin.companyId"]);
             return writer;
         };
 
@@ -3602,9 +3860,6 @@ $root.transit_realtime = (function() {
                 case 5:
                     message.routeId = reader.string();
                     break;
-                case 6:
-                    message.directionId = reader.uint32();
-                    break;
                 case 2:
                     message.startTime = reader.string();
                     break;
@@ -3613,6 +3868,12 @@ $root.transit_realtime = (function() {
                     break;
                 case 4:
                     message.scheduleRelationship = reader.int32();
+                    break;
+                case 1000:
+                    message[".kirin.contributor"] = reader.string();
+                    break;
+                case 1001:
+                    message[".kirin.companyId"] = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -3655,9 +3916,6 @@ $root.transit_realtime = (function() {
             if (message.routeId != null && message.hasOwnProperty("routeId"))
                 if (!$util.isString(message.routeId))
                     return "routeId: string expected";
-            if (message.directionId != null && message.hasOwnProperty("directionId"))
-                if (!$util.isInteger(message.directionId))
-                    return "directionId: integer expected";
             if (message.startTime != null && message.hasOwnProperty("startTime"))
                 if (!$util.isString(message.startTime))
                     return "startTime: string expected";
@@ -3675,6 +3933,12 @@ $root.transit_realtime = (function() {
                 case 5:
                     break;
                 }
+            if (message[".kirin.contributor"] != null && message.hasOwnProperty(".kirin.contributor"))
+                if (!$util.isString(message[".kirin.contributor"]))
+                    return ".kirin.contributor: string expected";
+            if (message[".kirin.companyId"] != null && message.hasOwnProperty(".kirin.companyId"))
+                if (!$util.isString(message[".kirin.companyId"]))
+                    return ".kirin.companyId: string expected";
             return null;
         };
 
@@ -3694,8 +3958,6 @@ $root.transit_realtime = (function() {
                 message.tripId = String(object.tripId);
             if (object.routeId != null)
                 message.routeId = String(object.routeId);
-            if (object.directionId != null)
-                message.directionId = object.directionId >>> 0;
             if (object.startTime != null)
                 message.startTime = String(object.startTime);
             if (object.startDate != null)
@@ -3722,6 +3984,10 @@ $root.transit_realtime = (function() {
                 message.scheduleRelationship = 5;
                 break;
             }
+            if (object[".kirin.contributor"] != null)
+                message[".kirin.contributor"] = String(object[".kirin.contributor"]);
+            if (object[".kirin.companyId"] != null)
+                message[".kirin.companyId"] = String(object[".kirin.companyId"]);
             return message;
         };
 
@@ -3744,7 +4010,8 @@ $root.transit_realtime = (function() {
                 object.startDate = "";
                 object.scheduleRelationship = options.enums === String ? "SCHEDULED" : 0;
                 object.routeId = "";
-                object.directionId = 0;
+                object[".kirin.contributor"] = "";
+                object[".kirin.companyId"] = "";
             }
             if (message.tripId != null && message.hasOwnProperty("tripId"))
                 object.tripId = message.tripId;
@@ -3756,8 +4023,10 @@ $root.transit_realtime = (function() {
                 object.scheduleRelationship = options.enums === String ? $root.transit_realtime.TripDescriptor.ScheduleRelationship[message.scheduleRelationship] : message.scheduleRelationship;
             if (message.routeId != null && message.hasOwnProperty("routeId"))
                 object.routeId = message.routeId;
-            if (message.directionId != null && message.hasOwnProperty("directionId"))
-                object.directionId = message.directionId;
+            if (message[".kirin.contributor"] != null && message.hasOwnProperty(".kirin.contributor"))
+                object[".kirin.contributor"] = message[".kirin.contributor"];
+            if (message[".kirin.companyId"] != null && message.hasOwnProperty(".kirin.companyId"))
+                object[".kirin.companyId"] = message[".kirin.companyId"];
             return object;
         };
 
@@ -3804,6 +4073,7 @@ $root.transit_realtime = (function() {
          * @property {string|null} [id] VehicleDescriptor id
          * @property {string|null} [label] VehicleDescriptor label
          * @property {string|null} [licensePlate] VehicleDescriptor licensePlate
+         * @property {string|null} [".kirin.physicalModeId"] VehicleDescriptor .kirin.physicalModeId
          */
 
         /**
@@ -3846,6 +4116,14 @@ $root.transit_realtime = (function() {
         VehicleDescriptor.prototype.licensePlate = "";
 
         /**
+         * VehicleDescriptor .kirin.physicalModeId.
+         * @member {string} .kirin.physicalModeId
+         * @memberof transit_realtime.VehicleDescriptor
+         * @instance
+         */
+        VehicleDescriptor.prototype[".kirin.physicalModeId"] = "";
+
+        /**
          * Creates a new VehicleDescriptor instance using the specified properties.
          * @function create
          * @memberof transit_realtime.VehicleDescriptor
@@ -3875,6 +4153,8 @@ $root.transit_realtime = (function() {
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.label);
             if (message.licensePlate != null && message.hasOwnProperty("licensePlate"))
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.licensePlate);
+            if (message[".kirin.physicalModeId"] != null && message.hasOwnProperty(".kirin.physicalModeId"))
+                writer.uint32(/* id 1000, wireType 2 =*/8002).string(message[".kirin.physicalModeId"]);
             return writer;
         };
 
@@ -3917,6 +4197,9 @@ $root.transit_realtime = (function() {
                     break;
                 case 3:
                     message.licensePlate = reader.string();
+                    break;
+                case 1000:
+                    message[".kirin.physicalModeId"] = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -3962,6 +4245,9 @@ $root.transit_realtime = (function() {
             if (message.licensePlate != null && message.hasOwnProperty("licensePlate"))
                 if (!$util.isString(message.licensePlate))
                     return "licensePlate: string expected";
+            if (message[".kirin.physicalModeId"] != null && message.hasOwnProperty(".kirin.physicalModeId"))
+                if (!$util.isString(message[".kirin.physicalModeId"]))
+                    return ".kirin.physicalModeId: string expected";
             return null;
         };
 
@@ -3983,6 +4269,8 @@ $root.transit_realtime = (function() {
                 message.label = String(object.label);
             if (object.licensePlate != null)
                 message.licensePlate = String(object.licensePlate);
+            if (object[".kirin.physicalModeId"] != null)
+                message[".kirin.physicalModeId"] = String(object[".kirin.physicalModeId"]);
             return message;
         };
 
@@ -4003,6 +4291,7 @@ $root.transit_realtime = (function() {
                 object.id = "";
                 object.label = "";
                 object.licensePlate = "";
+                object[".kirin.physicalModeId"] = "";
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -4010,6 +4299,8 @@ $root.transit_realtime = (function() {
                 object.label = message.label;
             if (message.licensePlate != null && message.hasOwnProperty("licensePlate"))
                 object.licensePlate = message.licensePlate;
+            if (message[".kirin.physicalModeId"] != null && message.hasOwnProperty(".kirin.physicalModeId"))
+                object[".kirin.physicalModeId"] = message[".kirin.physicalModeId"];
             return object;
         };
 

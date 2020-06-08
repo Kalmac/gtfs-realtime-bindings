@@ -1,0 +1,37 @@
+syntax = "proto2";
+package kirin;
+import "gtfs-realtime.proto";
+
+
+extend transit_realtime.TripUpdate {
+    optional string trip_message = 1000;
+    optional transit_realtime.Alert.Effect effect = 1001;
+    optional string headsign = 1002;
+}
+
+extend transit_realtime.TripDescriptor {
+    optional string contributor = 1000;
+    optional string company_id = 1001;
+}
+
+extend transit_realtime.TripUpdate.StopTimeUpdate {
+    optional string stoptime_message = 1000;
+}
+
+enum StopTimeEventStatus {
+  SCHEDULED = 0;
+  DELETED = 1;
+  NO_DATA = 2;
+  ADDED = 3;
+  DELETED_FOR_DETOUR = 4;
+  ADDED_FOR_DETOUR = 5;
+}
+
+extend transit_realtime.TripUpdate.StopTimeEvent {
+    optional transit_realtime.TripUpdate.StopTimeUpdate.ScheduleRelationship stop_time_event_relationship = 1000;
+    optional StopTimeEventStatus stop_time_event_status = 1001;
+}
+
+extend transit_realtime.VehicleDescriptor {
+    optional string physical_mode_id = 1000;
+}

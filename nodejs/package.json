@@ -1,22 +1,24 @@
 {
-    "author": "MobilityData",
-    "name": "gtfs-realtime-bindings",
+    "author": "Kalmac",
+    "name": "kirin-realtime-bindings",
     "description": "Javascript classes generated from the GTFS-realtime protocol buffer specification.",
     "tags": [
-        "gtfs-realtime"
+        "gtfs-realtime",
+        "navitia",
+        "kirin"
     ],
     "version": "0.0.5",
     "repository": {
         "type": "git",
-        "url": "https://github.com/MobilityData/gtfs-realtime-bindings.git"
+        "url": "https://github.com/Kalmac/gtfs-realtime-bindings.git"
     },
     "bugs": {
-        "url": "https://github.com/MobilityData/gtfs-realtime-bindings/issues"
+        "url": "https://github.com/Kalmac/gtfs-realtime-bindings/issues"
     },
-    "main": "gtfs-realtime.js",
+    "main": "kirin-realtime.js",
     "scripts": {
         "test": "mocha test/*.js",
-        "buildProto": "pbjs -t static-module -w commonjs -o gtfs-realtime.js ../gtfs-realtime.proto"
+        "buildProto": "pbjs -t static-module -w commonjs -o kirin-realtime.js ../kirin.proto"
     },
     "engines": [
         "node >= 0.10.0"
